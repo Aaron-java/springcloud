@@ -57,3 +57,4 @@ hystrix:
             timeoutInMilliseconds: 9000   #hystrix线程超过多少毫秒熔断，数值大于ribbon的处理超时时间，留给ribbon重试，否则直接熔断，重试就没有意义了
 
 
+envName: github
