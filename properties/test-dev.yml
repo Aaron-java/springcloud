@@ -1,1 +1,59 @@
 
+server:
+  port: 8008
+
+logging:
+  level.root: info
+
+spring:
+  redis:
+    database: 0
+    host: 10.0.3.21
+    port: 6379
+    password:
+    pool:
+      max-active: 1024
+      max-wait: -1
+      max-idle: 200
+      min-idle: 0
+    timeout: 3000
+
+
+eureka:
+  server:
+    enable-self-preservation: false
+  client:
+    registry-fetch-interval-seconds: 10
+    service-url:
+      defaultZone: http://10.0.3.21:8761/eureka/,http://10.0.3.22:8761/eureka/,http://10.0.3.23:8761/eureka/
+    registerWithEureka: true
+    fetchRegistry: true
+  instance:
+    instance-id: ${spring.cloud.client.ip-address}:${server.port}
+    prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 20   #服务过期时间配置,超过这个时间没有接收到心跳EurekaServer就会将这个实例剔除(默认90秒)
+    lease-renewal-interval-in-seconds: 5       #服务刷新时间配置，每隔这个时间会主动心跳一次(默认30秒)
+
+
+feign:
+  hystrix:
+    enabled: true
+
+ribbon:
+  ConnectTimeout: 2000          #创建连接的超时时间 毫秒
+  ReadTimeout: 8000            #处理请求的超时时间 毫秒
+  MaxAutoRetries: 0            #对当前实例的重试次数
+  MaxAutoRetriesNextServer: 0  #切换实例的重试次数
+
+hystrix:
+  command:
+    default:
+      circuitBreaker:
+        sleepWindowInMilliseconds: 10000
+        forceClosed: true
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 9000   #hystrix线程超过多少毫秒熔断，数值大于ribbon的处理超时时间，留给ribbon重试，否则直接熔断，重试就没有意义了
+
+
